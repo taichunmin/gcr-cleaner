@@ -19,7 +19,7 @@ jobs:
         with:
           token_format: 'access_token'
           workload_identity_provider: 'projects/391399927959/locations/global/workloadIdentityPools/gcr-cleaner-pool/providers/gcr-cleaner-provider'
-          service_account: 'gcr-cleaner'
+          service_account: 'gcr-cleaner@taichunmin.iam.gserviceaccount.com'
 
       # configure based on your registry
       - uses: 'docker/login-action@v2'
