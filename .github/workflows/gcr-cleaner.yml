@@ -12,6 +12,7 @@ jobs:
     permissions:
       id-token: write
     steps:
+      - uses: actions/checkout@v2
       # https://github.com/docker/login-action#google-artifact-registry-gar
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
