@@ -1,0 +1,37 @@
+# https://github.com/GoogleCloudPlatform/gcr-cleaner/blob/main/docs/deploy-github-actions.md
+name: 'gcr-cleaner'
+
+on:
+  schedule:
+    - cron: '0 0 */1 * *' # runs daily
+  workflow_dispatch: # allows for manual invocation
+
+jobs:
+  gcr-cleaner:
+    runs-on: 'ubuntu-latest'
+    steps:
+      # https://github.com/docker/login-action#google-artifact-registry-gar
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: 'projects/391399927959/locations/global/workloadIdentityPools/gcr-cleaner-pool/providers/gcr-cleaner-provider'
+          service_account: 'gcr-cleaner'
+
+      # configure based on your registry
+      - uses: 'docker/login-action@v2'
+        with:
+          registry: us-central1-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
+
+      # customize based on the gcr-cleaner flags
+      - uses: 'docker://us-docker.pkg.dev/gcr-cleaner/gcr-cleaner/gcr-cleaner-cli'
+        with:
+          args: >-
+            -repo=us-central1-docker.pkg.dev/taichunmin/gcf-artifacts/chatbot--imgur
+            -repo=us-central1-docker.pkg.dev/taichunmin/gcf-artifacts/cors--anywhere
+            -repo=us-central1-docker.pkg.dev/taichunmin/gcf-artifacts/gcf--line--devbot
+            -repo=us-central1-docker.pkg.dev/taichunmin/gcf-artifacts/linebot--redelivery
+            -grace=48h
