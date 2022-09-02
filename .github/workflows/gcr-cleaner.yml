@@ -9,6 +9,8 @@ on:
 jobs:
   gcr-cleaner:
     runs-on: 'ubuntu-latest'
+    permissions:
+      id-token: write
     steps:
       # https://github.com/docker/login-action#google-artifact-registry-gar
       - id: 'auth'
